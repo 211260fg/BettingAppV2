@@ -3,6 +3,8 @@ package com.bettingapp.florian.bettingappv2.activities;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,24 +17,41 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.bettingapp.florian.bettingappv2.R;
 import com.bettingapp.florian.bettingappv2.adapters.BetAdapter;
+import com.bettingapp.florian.bettingappv2.fragments.BetsFragment;
+import com.bettingapp.florian.bettingappv2.fragments.NewBetFragment;
+import com.bettingapp.florian.bettingappv2.fragments.OnFragmentInteractionListener;
+import com.bettingapp.florian.bettingappv2.fragments.ProfileFragment;
 import com.bettingapp.florian.bettingappv2.model.Bet;
 import com.bettingapp.florian.bettingappv2.repo.LoadedListener;
 import com.bettingapp.florian.bettingappv2.repo.Repository;
+import com.bettingapp.florian.bettingappv2.session.UserSessionManager;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LoadedListener{
+        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener{
 
-    private RecyclerView rv;
-    private BetAdapter adapter;
 
+    UserSessionManager session;
+
+    private Fragment betsFragment;
+    private Fragment newBetFragment;
+    private Fragment profileFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        session = new UserSessionManager(getApplicationContext());
+        if (!session.checkLogin()) {
+            finish();
+            return;
+        }
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -58,10 +77,11 @@ public class MainActivity extends AppCompatActivity
 
         getSupportActionBar().setIcon(R.drawable.betslogo);
 
-        rv = (RecyclerView) findViewById(R.id.betRecyclerView);
-        createItemView();
-        Repository.registerListener(this);
-        Repository.loadBets();
+        betsFragment = new BetsFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentpane, betsFragment).commit();
+
 
     }
 
@@ -97,36 +117,36 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void createItemView(){
-
-        //opbouw van de adapter voor de recyclerview
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        rv.setLayoutManager(llm);
-
-        adapter = new BetAdapter(Repository.getBets(), this);
-        rv.setAdapter(adapter);
-    }
-
 
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_profile) {
+            if (profileFragment == null || !profileFragment.isVisible()) {
+                profileFragment = new ProfileFragment();
+                transaction.replace(R.id.fragmentpane, profileFragment);
+                transaction.commit();
+            }
+        } else if (id == R.id.nav_allbets) {
+            if (betsFragment == null || !betsFragment.isVisible()) {
+                betsFragment = new BetsFragment();
+                transaction.replace(R.id.fragmentpane, betsFragment);
+                transaction.commit();
+            }
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_newbet) {
+            if (newBetFragment == null || !newBetFragment.isVisible()) {
+                newBetFragment = new NewBetFragment();
+                transaction.replace(R.id.fragmentpane, newBetFragment);
+                transaction.commit();
+            }
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_logout) {
+            Repository.logoutUser();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -135,23 +155,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBetsLoaded() {
-        Log.d("bets loaded", "success");
-        adapter.setBets(Repository.getBets());
-    }
+    public void onFragmentInteraction(int id) {
 
-    @Override
-    public void onLoadFailed() {
-        Log.d("bets loaded", "failed");
-    }
-
-    @Override
-    public void onBetAdded(Bet bet, int pos) {
-        adapter.notifyItemInserted(pos);
-    }
-
-    @Override
-    public void onBetRemoved(Bet bet, int pos) {
-        adapter.notifyItemRemoved(pos);
     }
 }

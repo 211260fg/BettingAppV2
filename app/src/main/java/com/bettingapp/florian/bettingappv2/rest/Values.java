@@ -7,5 +7,6 @@ public abstract class Values {
     public static final String URL_BASE = "https://bettingservice.herokuapp.com";
     public static final String URL_BETS = "/bets";
     public static final String URL_USERS = "/users";
-
+    public static final String URL_USER = "/user";
+    public static final String URL_SIGNUP = "/signup";
 }

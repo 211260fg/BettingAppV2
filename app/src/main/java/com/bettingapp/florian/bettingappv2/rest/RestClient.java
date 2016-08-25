@@ -1,9 +1,12 @@
 package com.bettingapp.florian.bettingappv2.rest;
 
+import android.util.Base64;
+
 import com.bettingapp.florian.bettingappv2.model.Bet;
 import com.bettingapp.florian.bettingappv2.model.User;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
@@ -14,7 +17,10 @@ import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.http.DELETE;
+import retrofit.http.Field;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 
@@ -44,7 +50,7 @@ public class RestClient {
 
         OkHttpClient okClient = new OkHttpClient();
 
-        /*okClient.interceptors().add(new Interceptor() {
+        okClient.interceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 final String credentials = username + ":" + password;
@@ -59,7 +65,7 @@ public class RestClient {
                 Response response = chain.proceed(request);
                 return response;
             }
-        });*/
+        });
 
         okClient.interceptors().add(new Interceptor() {
             @Override
@@ -79,17 +85,6 @@ public class RestClient {
     }
 
 
-    public Call<List<Bet>> getBetCall(){
-        return getItemClient().getBets();
-    }
-
-    public Call<List<User>> getUserCall(){
-        return getUserClient().getUsers();
-    }
-
-
-
-
 
     //Api calls naar elk json bestand
     public interface ItemApiInterface{
@@ -101,16 +96,21 @@ public class RestClient {
 
         @PUT(Values.URL_BETS+"/{bet_id}")
         Call<ResponseBody> putBet(@Path("betid") String betid);
-
-
     }
 
     public interface UserApiInterface{
         @GET(Values.URL_USERS)
         Call<List<User>> getUsers();
 
+        @GET(Values.URL_USER)
+        Call<User> getUser();
+
         @GET(Values.URL_USERS+"/{userid}")
         Call<User> getUserById(@Path("item_id") String userId);
+
+        @FormUrlEncoded
+        @POST(Values.URL_SIGNUP)
+        Call<User> signup(@Field("username") String username, @Field("password") String password);
 
     }
 

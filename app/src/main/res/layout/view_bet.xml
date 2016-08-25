@@ -33,38 +33,34 @@
             android:orientation="horizontal"
             android:padding="10dp">
 
-            <LinearLayout
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/betOptionA"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
                 android:layout_marginRight="15dp"
+                android:padding="10dp"
                 android:layout_weight="1"
-                android:background="@color/colorlightgreen"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/betOptionA"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:text="Option A" />
-            </LinearLayout>
+                android:gravity="center"
+                android:backgroundTint="@color/colorlightgreen"
+                android:textColor="@color/colordarkgreen"
+                android:text="Option A"
+                android:textSize="12sp"/>
 
 
-            <LinearLayout
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/betOptionB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
+                android:padding="10dp"
                 android:layout_weight="1"
-                android:background="@color/colorlightblue"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/betOptionB"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:padding="5dp"
-                    android:text="Option B" />
-            </LinearLayout>
+                android:gravity="center"
+                android:backgroundTint="@color/colorlightblue"
+                android:textColor="@color/colordarkblue"
+                android:text="Option B"
+                android:textSize="12sp"/>
 
         </LinearLayout>
 
