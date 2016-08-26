@@ -4,7 +4,10 @@ import android.util.Log;
 
 import com.bettingapp.florian.bettingappv2.model.Bet;
 import com.bettingapp.florian.bettingappv2.repo.Repository;
+import com.bettingapp.florian.bettingappv2.session.UserSessionManager;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -21,10 +24,30 @@ public class BetCallback implements Callback<List<Bet>> {
 
     public BetCallback() {
 
-        restClient = new RestClient("", "");
-
-        restClient.getItemClient().getBets().enqueue(this);
+        try{
+            HashMap<String, String> user = UserSessionManager.getUserDetails();
+            restClient = new RestClient(user.get(UserSessionManager.KEY_NAME), user.get(UserSessionManager.KEY_PASSWORD));
+        }
+        catch(NullPointerException ignored){
+        }
     }
+
+    public void loadBets(){
+        restClient.getBetClient().getBets().enqueue(this);
+    }
+
+    public void upvoteA(Bet bet){
+        restClient.getBetClient().voteA(bet.getId()).enqueue(new SingleBetCallback());
+    }
+
+    public void upvoteB(Bet bet){
+        restClient.getBetClient().voteB(bet.getId()).enqueue(new SingleBetCallback());
+    }
+
+    public void addBet(Bet bet){
+        restClient.getBetClient().addBet(bet.getTitle(), bet.getOptionA().getText(), bet.getOptionB().getText(), bet.getReward(), bet.getCategory().name()).enqueue(new SingleBetCallback());
+    }
+
 
     @Override
     public void onResponse(Response<List<Bet>> response) {
@@ -43,4 +66,29 @@ public class BetCallback implements Callback<List<Bet>> {
         Repository.onLoadFailed();
         Log.d("load failed", t.getMessage());
     }
+
+    private class SingleBetCallback implements Callback<Bet>{
+
+        @Override
+        public void onResponse(Response<Bet> response) {
+            if(response.isSuccess()) {
+                Log.d("update success", "bet = "+response.body().getTitle());
+                Repository.onUpdateSuccess(response.body());
+            }else{
+                try {
+                    Log.d("update failed", response.errorBody().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Repository.onUpdateFailed();
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Log.d("upvote failed", t.getMessage());
+            Repository.onUpdateFailed();
+        }
+    }
+
 }

@@ -18,6 +18,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bettingapp.florian.bettingappv2.R;
 import com.bettingapp.florian.bettingappv2.adapters.BetAdapter;
@@ -29,6 +33,7 @@ import com.bettingapp.florian.bettingappv2.model.Bet;
 import com.bettingapp.florian.bettingappv2.repo.LoadedListener;
 import com.bettingapp.florian.bettingappv2.repo.Repository;
 import com.bettingapp.florian.bettingappv2.session.UserSessionManager;
+import com.bumptech.glide.Glide;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener{
@@ -36,9 +41,13 @@ public class MainActivity extends AppCompatActivity
 
     UserSessionManager session;
 
+    private NavigationView navView;
+
     private Fragment betsFragment;
     private Fragment newBetFragment;
     private Fragment profileFragment;
+
+    private FloatingActionButton mFAB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,18 +64,29 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        /*mFAB = (FloatingActionButton) findViewById(R.id.fab);
+        mFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
+
+        createDrawerMenu();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                //toggleTranslateFAB(slideOffset);
+
+                //mDrawerList.bringToFront();
+                //drawerLayout.requestLayout();
+            }
+        };
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -118,11 +138,12 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
@@ -155,7 +176,50 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(int id) {
-
+    public void onFragmentInteraction(OnFragmentInteractionListener.fragment fragment, int id) {
+        if(fragment== OnFragmentInteractionListener.fragment.betsfragment) {
+            navView = (NavigationView) findViewById(R.id.nav_view);
+            navView.setCheckedItem(R.id.nav_allbets);
+            onNavigationItemSelected(navView.getMenu().findItem(R.id.nav_allbets));
+        }
     }
+
+    public void toggleTranslateFAB(float slideOffset) {
+        mFAB.setTranslationX(slideOffset * 200);
+    }
+
+    public void createDrawerMenu() {
+
+        try {
+            navView = (NavigationView) findViewById(R.id.nav_view);
+
+            navView.setNavigationItemSelectedListener(this);
+            View headerView = navView.getHeaderView(0);
+
+            LinearLayout drawerHeader = (LinearLayout) headerView.findViewById(R.id.drawer_header);
+            drawerHeader.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    navView.setCheckedItem(R.id.nav_profile);
+                    onNavigationItemSelected(navView.getMenu().findItem(R.id.nav_profile));
+                }
+            });
+
+
+            ImageView profilephoto = (ImageView) headerView.findViewById(R.id.user_profile_photo);
+            TextView profilename = (TextView) headerView.findViewById(R.id.username);
+
+            if(Repository.getCurrentUser().getProfilePictureUrl().equals("")){
+                Glide.with(this).load(R.drawable.profile).centerCrop().into(profilephoto);
+            }else {
+                Glide.with(this).load(Repository.getCurrentUser().getProfilePictureUrl()).centerCrop().into(profilephoto);
+            }
+            profilename.setText(Repository.getCurrentUser().getUsername());
+
+        } catch (NullPointerException npe) {
+            npe.printStackTrace();
+        }
+    }
+
+
 }

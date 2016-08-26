@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:layout_marginBottom="25dp"
+    android:layout_marginBottom="8dp"
     card_view:cardBackgroundColor="#101010"
     card_view:cardCornerRadius="1dp">
 
@@ -13,7 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="25dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="2dp">
 
         <TextView
             android:id="@+id/betTitle"
@@ -59,10 +62,21 @@
                 android:gravity="center"
                 android:backgroundTint="@color/colorlightblue"
                 android:textColor="@color/colordarkblue"
-                android:text="Option B"
+                android:text="Option A"
                 android:textSize="12sp"/>
 
         </LinearLayout>
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/betprogress"
+            android:progressTint="@color/colordarkgreen"
+            android:indeterminateTint="@color/colorlightblue"
+            android:backgroundTint="@color/colorPrimary"
+            android:secondaryProgressTint="@color/colorPrimary"
+            android:layout_gravity="center_horizontal" />
 
 
     </LinearLayout>

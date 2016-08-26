@@ -11,4 +11,6 @@ public interface LoadedListener {
     void onLoadFailed();
     void onBetAdded(Bet bet, int pos);
     void onBetRemoved(Bet bet, int pos);
+    void onBetUpdated(Bet bet);
+    void onUpdateFailed();
 }

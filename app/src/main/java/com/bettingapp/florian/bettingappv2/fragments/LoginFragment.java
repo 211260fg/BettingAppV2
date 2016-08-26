@@ -120,7 +120,7 @@ public class LoginFragment extends Fragment implements OnLoggedInListener {
     }
 
     private void signup(){
-        mListener.onFragmentInteraction( 0);
+        mListener.onFragmentInteraction(OnFragmentInteractionListener.fragment.registerfragment, 0);
     }
 
 

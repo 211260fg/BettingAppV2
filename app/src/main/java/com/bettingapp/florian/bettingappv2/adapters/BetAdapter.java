@@ -1,15 +1,20 @@
 package com.bettingapp.florian.bettingappv2.adapters;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bettingapp.florian.bettingappv2.R;
 import com.bettingapp.florian.bettingappv2.model.Bet;
+import com.bettingapp.florian.bettingappv2.repo.Repository;
 
 import java.util.List;
 
@@ -53,6 +58,29 @@ public class BetAdapter extends RecyclerView.Adapter<BetAdapter.BetViewHolder>{
         betViewHolder.betTitle.setText(bet.getTitle());
         betViewHolder.betOptionA.setText(bet.getOptionA().getText());
         betViewHolder.betOptionB.setText(bet.getOptionB().getText());
+
+        int optionAVotes = bet.getOptionA().getVotes();
+        int optionBVotes = bet.getOptionB().getVotes();
+        int totalUpvotes = optionAVotes + optionBVotes;
+        Log.d("upvotes", ""+totalUpvotes);
+        if(totalUpvotes!=0)
+            betViewHolder.betProgress.setProgress((optionAVotes*100)/totalUpvotes);
+        else
+            betViewHolder.betProgress.setProgress(50);
+
+        betViewHolder.betOptionA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Repository.upvoteAnswer(bet, bet.getOptionA());
+            }
+        });
+        betViewHolder.betOptionB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Repository.upvoteAnswer(bet, bet.getOptionB());
+            }
+        });
+
     }
 
     @Override
@@ -71,15 +99,17 @@ public class BetAdapter extends RecyclerView.Adapter<BetAdapter.BetViewHolder>{
     public static class BetViewHolder extends RecyclerView.ViewHolder{
         CardView cv;
         TextView betTitle;
-        TextView betOptionA;
-        TextView betOptionB;
+        Button betOptionA;
+        Button betOptionB;
+        ProgressBar betProgress;
 
         BetViewHolder(View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.betCardView);
             betTitle = (TextView) itemView.findViewById(R.id.betTitle);
-            betOptionA = (TextView) itemView.findViewById(R.id.betOptionA);
-            betOptionB = (TextView) itemView.findViewById(R.id.betOptionB);
+            betOptionA = (Button) itemView.findViewById(R.id.betOptionA);
+            betOptionB = (Button) itemView.findViewById(R.id.betOptionB);
+            betProgress = (ProgressBar) itemView.findViewById(R.id.betprogress);
         }
 
     }

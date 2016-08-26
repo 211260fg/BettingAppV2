@@ -5,5 +5,10 @@ package com.bettingapp.florian.bettingappv2.fragments;
  */
 public interface OnFragmentInteractionListener {
 
-    void onFragmentInteraction(int id);
+    void onFragmentInteraction(fragment fragment, int id);
+
+    public enum fragment{
+        betsfragment, newfragment, profilefragment, loginfragment, registerfragment
+    }
+
 }

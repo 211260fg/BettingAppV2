@@ -36,8 +36,8 @@ public class RestClient {
     }
 
     //creëer en return de clients
-    public ItemApiInterface getItemClient(){
-        return client.create(ItemApiInterface.class);
+    public BetApiInterface getBetClient(){
+        return client.create(BetApiInterface.class);
     }
 
     public UserApiInterface getUserClient(){
@@ -87,15 +87,23 @@ public class RestClient {
 
 
     //Api calls naar elk json bestand
-    public interface ItemApiInterface{
+    public interface BetApiInterface {
         @GET(Values.URL_BETS)
         Call<List<Bet>> getBets();
 
         @DELETE(Values.URL_BETS+"/{bet_id}")
-        Call<ResponseBody> deleteBet(@Path("betid") String betid);
+        Call<ResponseBody> deleteBet(@Path("bet_id") String betid);
 
-        @PUT(Values.URL_BETS+"/{bet_id}")
-        Call<ResponseBody> putBet(@Path("betid") String betid);
+        @POST(Values.URL_BETS+"/{bet_id}"+Values.URL_VOTE_A)
+        Call<Bet> voteA(@Path("bet_id") String betid);
+
+        @POST(Values.URL_BETS+"/{bet_id}"+Values.URL_VOTE_B)
+        Call<Bet> voteB(@Path("bet_id") String betid);
+
+        @FormUrlEncoded
+        @POST(Values.URL_BETS)
+        Call<Bet> addBet(@Field("title") String title, @Field("optionA") String optionA,@Field("optionB") String optionB,
+                         @Field("reward") String reward,@Field("category") String category);
     }
 
     public interface UserApiInterface{
@@ -106,7 +114,7 @@ public class RestClient {
         Call<User> getUser();
 
         @GET(Values.URL_USERS+"/{userid}")
-        Call<User> getUserById(@Path("item_id") String userId);
+        Call<User> getUserById(@Path("userid") String userId);
 
         @FormUrlEncoded
         @POST(Values.URL_SIGNUP)

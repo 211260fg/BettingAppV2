@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BettingAppV2</string>
+    <string name="app_name">Bets</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -8,4 +8,31 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string-array name="array_sort">
+        <item>Newest</item>
+        <item>Most popular</item>
+    </string-array>
+
+    <string-array name="array_categories">
+
+        <item>PEOPLE</item>
+        <item>NATURE</item>
+        <item>MUSIC</item>
+        <item>FILM</item>
+        <item>SPACE</item>
+        <item>MATH</item>
+        <item>GEOGRAPHY</item>
+        <item>SCIENCE</item>
+        <item>LANGUAGES</item>
+        <item>COUNTRIES</item>
+        <item>FOOD</item>
+        <item>TECHNOLOGY</item>
+        <item>SPORTS</item>
+        <item>SOCIAL</item>
+        <item>MEDIA</item>
+        <item>MEDICINE</item>
+        <item>OTHER</item>
+    </string-array>
 </resources>

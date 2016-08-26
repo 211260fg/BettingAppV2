@@ -9,6 +9,8 @@ import com.bettingapp.florian.bettingappv2.rest.SignupCallback;
 import com.bettingapp.florian.bettingappv2.session.UserSessionManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -16,17 +18,25 @@ import java.util.List;
  */
 public class Repository {
 
-    private static List<Bet> bets_ = new ArrayList<>();
+    private static List<Bet> bets = new ArrayList<>();
     private static List<LoadedListener> loadedListeners = new ArrayList<>();
     private static List<OnLoggedInListener> loggedInListeners = new ArrayList<>();
     private static BetCallback callback;
 
+    static{
+        callback=new BetCallback();
+    }
+
     public static List<Bet> getBets(){
-        return bets_;
+        return bets;
+    }
+
+    public static User getCurrentUser() {
+        return UserSessionManager.getCurrentUser();
     }
 
     public static void loadBets(){
-        callback = new BetCallback();
+        callback.loadBets();
     }
 
     public static void registerListener(LoadedListener listener){
@@ -66,13 +76,33 @@ public class Repository {
     }
 
     public static void onBetsLoaded(List<Bet> bets){
-        bets_=bets;
+        Repository.bets =bets;
+        Repository.sortbets(true);
         notifyListenersBetsLoaded();
     }
 
+    public static void addBet(Bet bet){
+        callback.addBet(bet);
+    }
+
     public static void upvoteAnswer(Bet bet, Option option){
-        if(bet.getOptionA()==option){
-            bet.getOptionA().upvote();
+        if(option.equals(bet.getOptionA())){
+            callback.upvoteA(bet);
+        }else{
+            callback.upvoteB(bet);
+        }
+    }
+
+    public static void onUpdateSuccess(Bet bet){
+        for(LoadedListener listener: loadedListeners){
+            listener.onBetUpdated(bet);
+            //listener.onBetsLoaded();
+        }
+    }
+
+    public static void onUpdateFailed(){
+        for(LoadedListener listener: loadedListeners){
+            listener.onUpdateFailed();
         }
     }
 
@@ -104,5 +134,29 @@ public class Repository {
         }
     }
 
+    public static void sortbets(boolean sortByNewest){
+        if(sortByNewest){
+            Collections.sort(bets, new BetDateComparator());
+        }else{
+            Collections.sort(bets, new BetPopularityComparator());
+        }
+        notifyListenersBetsLoaded();
+    }
+
+    public static class BetDateComparator implements Comparator<Bet> {
+        @Override
+        public int compare(Bet bet1, Bet bet2) {
+            return bet1.getDate().compareTo(bet2.getDate());
+        }
+    }
+
+    public static class BetPopularityComparator implements Comparator<Bet> {
+        @Override
+        public int compare(Bet bet1, Bet bet2) {
+            int bet1totalvotes = bet1.getOptionA().getVotes()+bet1.getOptionB().getVotes();
+            int bet2totalvotes = bet2.getOptionA().getVotes()+bet2.getOptionB().getVotes();
+            return bet1totalvotes>bet2totalvotes?-1:1;
+        }
+    }
 
 }

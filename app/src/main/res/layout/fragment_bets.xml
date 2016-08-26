@@ -17,6 +17,7 @@
         android:padding="5dp">
 
         <TextView
+            android:id="@+id/sortText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -26,7 +27,7 @@
 
         <Spinner
             android:id="@+id/sortSpinner"
-            android:layout_width="wrap_content"
+            android:layout_width="25dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:background="@drawable/ic_arrow_drop_down_circle"
@@ -35,15 +36,22 @@
 
     </RelativeLayout>
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/betRecyclerView"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/border"
         android:clipToPadding="false"
         android:layout_below="@id/spinnerlayout"
-        android:layout_margin="10dp"
-        android:padding="20dp" />
+        android:layout_margin="10dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/betRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/border"
+            android:clipToPadding="false"
+            android:padding="20dp" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

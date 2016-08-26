@@ -69,7 +69,7 @@ public class RegisterFragment extends Fragment implements OnLoggedInListener{
         link_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onFragmentInteraction(0);
+                mListener.onFragmentInteraction(OnFragmentInteractionListener.fragment.loginfragment, 0);
             }
         });
         btnRegister.setOnClickListener(new View.OnClickListener() {
